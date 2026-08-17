@@ -1,5 +1,0 @@
-__pycache__/
-*.py[cod]
-.env
-secret.yaml
-.DS_Store
