@@ -1,0 +1,30 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: workiva-zero-row-hider
+  namespace: deppytest-dev
+spec:
+  runPolicy: Serial
+
+  source:
+    type: Git
+    git:
+      uri: https://github.com/dhespinabeqirajatc-ship-it/Hide_Zeros.git
+      ref: main
+
+  strategy:
+    type: Docker
+    dockerStrategy: {}
+
+  output:
+    to:
+      kind: ImageStreamTag
+      name: workiva-zero-row-hider:latest
+
+  # This does NOT automatically rebuild on a GitHub push.
+  # Start the build manually in OpenShift after committing code changes.
+  triggers:
+    - type: ConfigChange
+
+  successfulBuildsHistoryLimit: 5
+  failedBuildsHistoryLimit: 5

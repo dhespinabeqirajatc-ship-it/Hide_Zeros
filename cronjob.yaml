@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: workiva-zero-row-hider
+  namespace: deppytest-dev
+spec:
+  # Daily at 00:00 UTC. Adjust this expression to your preferred schedule.
+  schedule: "0 0 * * *"
+  timeZone: "Etc/UTC"
+
+  concurrencyPolicy: Forbid
+  suspend: false
+
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      activeDeadlineSeconds: 7200
+
+      template:
+        spec:
+          restartPolicy: Never
+
+          containers:
+            - name: workiva-zero-row-hider
+              image: image-registry.openshift-image-registry.svc:5000/deppytest-dev/workiva-zero-row-hider:latest
+              imagePullPolicy: Always
+
+              envFrom:
+                - secretRef:
+                    name: workiva-zero-row-secrets
+
+              env:
+                - name: WORKIVA_CONTROL_CELL
+                  value: "B2"
+
+                - name: WORKIVA_API_VERSION
+                  value: "2026-01-01"
+
+                - name: WORKIVA_BASE_URL
+                  value: "https://api.eu.wdesk.com"
